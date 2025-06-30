@@ -1,1 +1,1 @@
-##  SpriteEditor using PySide6
+# SpriteEditor using PySide6

@@ -364,8 +364,8 @@ class MyWindow(QMainWindow):
         self.colorbar = MyColorBar(self)
         self.colorbar.loadPalette()
 
-        self.editarea.foregroundColor = self.colorbar.selectedForeColor.color
-        self.editarea.backgroundColor = self.colorbar.selectedBackColor.color
+        self.editarea.changeForeColor(self.colorbar.selectedForeColor.color)
+        self.editarea.changeBackColor(self.colorbar.selectedBackColor.color)
 
         self.editarea.cursorPosChanged.connect(self.updateCursorPosDisplay)
 
