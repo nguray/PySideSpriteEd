@@ -171,8 +171,8 @@ class MyEditArea(QtWidgets.QWidget):
         """
         self.select_mode_obj.initPasteRect()
         self.select_mode_obj.initSelectRect()
-        self.rectangle_mode_obj.initDrawRect()
-        self.ellipse_mode_obj.initDrawEllipse()
+        self.rectangle_mode_obj.initRectangle()
+        self.ellipse_mode_obj.initEllipse()
 
     def setEditMode(self, m):
         """
@@ -433,7 +433,7 @@ class MyEditArea(QtWidgets.QWidget):
             self.rectangle_mode_obj.drawLiveRect(qp)
 
         if not self.ellipse_mode_obj.live_rect.isEmpty():
-            self.ellipse_mode_obj.drawLiveEllipse(qp)
+            self.ellipse_mode_obj.drawLiveRect(qp)
 
         # if (self.nb_points>0):
         #    self.drawLivePolyLine(qp)

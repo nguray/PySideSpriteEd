@@ -39,14 +39,14 @@ class PencilModeCls(EditMode):
         if self.InSprite(self.x, self.y):
             if mouseEvent.buttons() == QtCore.Qt.LeftButton:
                 self.sprite.setPixel(self.x, self.y,
-                                           self.foregroundColor.rgba())
+                                           EditMode.foregroundColor.rgba())
                 self.prev_x = self.x
                 self.prev_y = self.y
                 self.outer.repaint()
             elif mouseEvent.buttons() == QtCore.Qt.RightButton:
                 self.backupSprite()
                 self.sprite.setPixel(self.x, self.y,
-                                           self.backgroundColor.rgba())
+                                           EditMode.backgroundColor.rgba())
                 self.prev_x = self.x
                 self.prev_y = self.y
                 self.outer.repaint()
