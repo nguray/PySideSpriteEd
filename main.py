@@ -118,28 +118,28 @@ class MyWindow(QMainWindow):
         self.fillerModeAction.setChecked(False)
 
     def setSelectEditMode(self):
+        self.currentToolModeAction.setIcon(QIcon(':res/SelectBoxIcon.png'))
         self.unCheckAllToolBarBtns()
-        self.selectRectModeAction.setChecked(True)
         self.editarea.setEditMode(self.editarea.EDIT.Select)
 
     def setPencilEditMode(self):
+        self.currentToolModeAction.setIcon(QIcon(':res/Pencil.png'))
         self.unCheckAllToolBarBtns()
-        self.pencilModeAction.setChecked(True)
         self.editarea.setEditMode(self.editarea.EDIT.Pencil)
 
     def setRectangleEditMode(self):
+        self.currentToolModeAction.setIcon(QIcon(':res/DrawRectangle.png'))
         self.unCheckAllToolBarBtns()
-        self.rectangleModeAction.setChecked(True)
         self.editarea.setEditMode(self.editarea.EDIT.DrawRectangle)
 
     def setEllipseEditMode(self):
+        self.currentToolModeAction.setIcon(QIcon(':res/DrawEllipse.png'))
         self.unCheckAllToolBarBtns()
-        self.ellipseModeAction.setChecked(True)
         self.editarea.setEditMode(self.editarea.EDIT.DrawEllipse)
 
     def setFillEditMode(self):
+        self.currentToolModeAction.setIcon(QIcon(':res/FloodFillIcon.png'))
         self.unCheckAllToolBarBtns()
-        self.fillerModeAction.setChecked(True)
         self.editarea.setEditMode(self.editarea.EDIT.Fill)
 
     def undoEdit(self):
@@ -185,11 +185,11 @@ class MyWindow(QMainWindow):
         self.editarea.setEditSprite(self.spritebar.getCurSrpite())
 
     def initUI(self):
+
         self.x = -1
         self.y = -1
         self.filename = ""
         self.statusBar()
-
 
         # ------------------------------------------------
         # Menu Actions
@@ -310,6 +310,10 @@ class MyWindow(QMainWindow):
 
         # ------------------------------------------------
         # Toolbar Actions
+        self.currentToolModeAction = QAction(QIcon(':res/SelectRect.png'),
+                                  'CurrTool', self)
+        self.currentToolModeAction.setStatusTip('Current Tool')
+
         self.selectRectModeAction = QAction(QIcon(':res/SelectRect.png'),
                                        'Select', self)
         self.selectRectModeAction.setStatusTip('Select Tool')
@@ -341,6 +345,8 @@ class MyWindow(QMainWindow):
 
         # --
         self.toolbar = self.addToolBar('Tools')
+        self.toolbar.addAction(self.currentToolModeAction)
+        self.toolbar.addSeparator()
         self.toolbar.addAction(self.selectRectModeAction)
         self.toolbar.addAction(self.pencilModeAction)
         self.toolbar.addAction(self.rectangleModeAction)
@@ -410,7 +416,7 @@ class MyWindow(QMainWindow):
 
 
 def main():
-    
+
     app = QApplication(sys.argv)
     # Afficher les icons dans les menus
     app.setAttribute(Qt.AA_DontShowIconsInMenus, False)
