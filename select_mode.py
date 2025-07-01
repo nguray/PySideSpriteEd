@@ -9,47 +9,34 @@ from selectrect import SelectRect
 
 class SelectModeCls(EditMode):
 
-    paste_rect = Rect(0, 0, 0, 0)
-    hit_paste = False
-    hit_paste_x = -1
-    hit_paste_y = -1
-    hit_paste_rect = Rect(0, 0, 0, 0)
-
-    hit_corner = None
-    hit_pix_x = -1
-    hit_pix_y = -1
-
-    hit_pt = -1
-
-    cpy_width = 0
-    cpy_height = 0
-
-    select_rect = SelectRect()
-    start_x = 0
-    start_y = 0
-    f_move = False
-
     def __init__(self, outer):
         EditMode.__init__(self)
         self.outer = outer
+        self.initPasteRect()
+        self.initSelectRect()
         # self.select_rect.setTopLeft(10,20)
         # x, y = self.select_rect.getBottomLeft()
         # pass
 
     def initSelectRect(self):
+        self.cpy_width = 0
+        self.cpy_height = 0
         self.select_rect = SelectRect()
         self.hit_corner = None
         self.start_x = 0
         self.start_y = 0
         self.f_move = False
-        self.hit_pix_x = -1
-        self.hit_pix_y = -1
+        self.top_left_handle = Rect(0,0,0,0)
+        self.top_right_handle = Rect(0,0,0,0)
+        self.bottom_left_handle = Rect(0,0,0,0)
+        self.bottom_right_handle = Rect(0,0,0,0)
 
     def initPasteRect(self):
-        self.paste_rect.left = -1
-        self.paste_rect.right = -1
-        self.paste_rect.top = -1
-        self.paste_rect.bottom = -1
+        self.paste_rect = Rect(-1,-1,-1,-1)
+        self.hit_paste = False
+        self.hit_paste_x = -1
+        self.hit_paste_y = -1
+        self.hit_paste_rect = Rect(0, 0, 0, 0)
 
     def drawPasteRect(self, qp):
         pen = QtGui.QPen(QtGui.QColor(50, 50, 200), 2, QtCore.Qt.SolidLine)
@@ -84,22 +71,33 @@ class SelectModeCls(EditMode):
             qp.drawLine(wx1, wy2, wx1, wy1)
 
             # Draw corners handle
-            s = int(self.pixSize / 2)
-            qp.fillRect(wx1,wy1,s,s,QtGui.QBrush(QtGui.QColor(50,50,200)))            
-            qp.fillRect(wx2-s,wy1,s,s,QtGui.QBrush(QtGui.QColor(50,50,200)))            
-            qp.fillRect(wx2-s,wy2-s,s,s,QtGui.QBrush(QtGui.QColor(50,50,200)))    
-            qp.fillRect(wx1,wy2-s,s,s,QtGui.QBrush(QtGui.QColor(50,50,200)))    
+            s = int(self.pixSize / 3)
+            self.top_left_handle = Rect(wx1-s,wy1-s,wx1+s,wy1+s)
+            qp.fillRect(self.top_left_handle.left,self.top_left_handle.top,
+                        self.top_left_handle.width(),self.top_left_handle.height(),
+                        QtGui.QBrush(QtGui.QColor(150,150,200)))            
+            self.top_right_handle = Rect(wx2-s,wy1-s,wx2+s,wy1+s)
+            qp.fillRect(self.top_right_handle.left,self.top_right_handle.top,
+                        self.top_right_handle.width(),self.top_right_handle.height(),
+                        QtGui.QBrush(QtGui.QColor(150,150,200)))            
+            self.bottom_left_handle = Rect(wx1-s,wy2-s,wx1+s,wy2+s)
+            qp.fillRect(self.bottom_left_handle.left,self.bottom_left_handle.top,
+                        self.bottom_left_handle.width(),self.bottom_left_handle.height(),
+                        QtGui.QBrush(QtGui.QColor(150,150,200)))            
+            self.bottom_right_handle = Rect(wx2-s,wy2-s,wx2+s,wy2+s)
+            qp.fillRect(self.bottom_right_handle.left,self.bottom_right_handle.top,
+                        self.bottom_right_handle.width(),self.bottom_right_handle.height(),
+                        QtGui.QBrush(QtGui.QColor(150,150,200)))            
 
     def hitCorner(self,x,y):
-        l,t,r,b = self.select_rect.getNormalize()
-        if (x==l) and (y==t):
+        if self.top_left_handle.contains(x,y):
             return self.select_rect.TopLeft
-        elif (x==r) and (y==t):
+        elif self.top_right_handle.contains(x,y):
             return self.select_rect.TopRight
-        elif (x==r) and (y==b):
-            return self.select_rect.BottomRight
-        elif (x==l) and (y==b):
+        elif self.bottom_left_handle.contains(x,y):
             return self.select_rect.BottomLeft
+        elif self.bottom_right_handle.contains(x,y):
+            return self.select_rect.BottomRight
         else:
             return None
 
@@ -125,7 +123,7 @@ class SelectModeCls(EditMode):
                         self.select_rect.setTopLeft(x,y)
                         self.select_rect.setBottomRight(x,y)
                     else:
-                        self.hit_corner = self.hitCorner(x,y)
+                        self.hit_corner = self.hitCorner(mousePos.x(), mousePos.y())
                         if self.hit_corner is None:
                             if self.select_rect.contains(x,y):
                                 self.select_rect.backup()
@@ -135,6 +133,7 @@ class SelectModeCls(EditMode):
                             else:
                                 self.select_rect.setTopLeft(x,y)
                                 self.select_rect.setBottomRight(x,y)
+
 
                 self.outer.repaint()
 
