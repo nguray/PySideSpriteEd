@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 '''
-Created on 24 Nov. 2019
+Created on 30 Juin 2025
+
+Customn QWidget for drawing canvas
 
 @author: nguray
 '''
@@ -377,25 +379,10 @@ class MyEditArea(QtWidgets.QWidget):
             self.setCursor(self.myPickColorCursor)
         else:
             self.current_edit_mode.keyPressEvent(e)
-#             if (self.edit_mode==self.EDIT.DrawLine):
-#                 #
-#                 self.DrawPolyLineModeObj.keyPressEvent(e)
-#                 #self.initDrawLine()
-#                 #self.repaint()
-#             elif (self.edit_mode==self.EDIT.DrawRectangle):
-#                 #
-#                 self.DrawRectangleModeObj.keyPressEvent(e)
-#                 #self.initDrawRect()
-#                 #self.repaint()
-#             elif (self.edit_mode==self.EDIT.DrawEllipse):
-#                 self.DrawEllipseModeObj.keyPressEvent(e)
-#                 #self.initDrawRect()
-#                 #self.repaint()
 
     def keyReleaseEvent(self,e):
         if e.key()==QtCore.Qt.Key_Shift:
             self.setCursor(QtCore.Qt.ArrowCursor)
-
 
     def paintEvent(self, e):
 
@@ -410,12 +397,13 @@ class MyEditArea(QtWidgets.QWidget):
         h = size.height()
         #print('w = {}    h = {}'.format(w,h))
 
+        # Compute pixels size for display
         o1 = (w-4) / EditMode.nbColumnPix
         o2 = (h-4) / EditMode.nbRowPix
         if o1<o2:
-            EditMode.pixSize = o1 * self.canvasScale
+            EditMode.pixSize = int(o1 * self.canvasScale)
         else:
-            EditMode.pixSize = o2 * self.canvasScale
+            EditMode.pixSize = int(o2 * self.canvasScale)
 
         self.drawGrid(qp)
 

@@ -43,6 +43,7 @@ class RectangleModeCls(EditMode):
 
             # Draw corners handle
             s = int(self.pixSize / 3)
+            s = 4 if s<4 else s
             self.top_left_handle = Rect(wx1-s,wy1-s,wx1+s,wy1+s)
             qp.fillRect(self.top_left_handle.left,self.top_left_handle.top,
                         self.top_left_handle.width(),self.top_left_handle.height(),
