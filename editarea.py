@@ -300,9 +300,9 @@ class MyEditArea(QtWidgets.QWidget):
         #
         self.select_mode_obj.initPasteRect()
         self.select_mode_obj.initSelectRect()
-        self.rectangle_mode_obj.initDrawRect()
-        self.ellipse_mode_obj.initDrawEllipse()
-        EditMode.backupSprite()
+        self.rectangle_mode_obj.initRectangle()
+        self.ellipse_mode_obj.initEllipse()
+        self.current_edit_mode.backupSprite()
         #
         h = int(EditMode.nbColumnPix / 2)
         w = EditMode.nbColumnPix - 1
@@ -317,53 +317,51 @@ class MyEditArea(QtWidgets.QWidget):
 
     def doMirrorVertical(self):
         #
-        self.SelectModeObj.initPasteRect()
-        self.SelectModeObj.initSelectRect()
-        self.DrawRectangleModeObj.initDrawRect()
-        self.DrawEllipseModeObj.initDrawEllipse()
-        self.backupSprite()
+        self.select_mode_obj.initPasteRect()
+        self.select_mode_obj.initSelectRect()
+        self.rectangle_mode_obj.initRectangle()
+        self.ellipse_mode_obj.initEllipse()
+        self.current_edit_mode.backupSprite()
         #
-        h = int(self.nbRowPix / 2)
-        w = self.nbRowPix - 1
-        for x in range(0, self.nbColumnPix):
+        h = int(EditMode.nbRowPix / 2)
+        w = EditMode.nbRowPix - 1
+        for x in range(0, EditMode.nbColumnPix):
             for i in range(0, h):
-                c0 = self.sprite.pixel(x, i)
-                c1 = self.sprite.pixel(x, w - i)
-                self.sprite.setPixel(x, i, c1)
-                self.sprite.setPixel(x, w - i, c0)
+                c0 = EditMode.sprite.pixel(x, i)
+                c1 = EditMode.sprite.pixel(x, w - i)
+                EditMode.sprite.setPixel(x, i, c1)
+                EditMode.sprite.setPixel(x, w - i, c0)
         #
         self.repaint()
 
     def doRotate90Clock(self):
         #
-        self.SelectModeObj.initPasteRect()
-        self.SelectModeObj.initSelectRect()
-        self.DrawPolyLineModeObj.initDrawLine()
-        self.DrawRectangleModeObj.initDrawRect()
-        self.DrawEllipseModeObj.initDrawEllipse()
-        self.backupSprite()
+        self.select_mode_obj.initPasteRect()
+        self.select_mode_obj.initSelectRect()
+        self.rectangle_mode_obj.initRectangle()
+        self.ellipse_mode_obj.initEllipse()
+        self.current_edit_mode.backupSprite()
         #
-        for y in range(0, self.nbColumnPix):
-            for x in range(0, self.nbRowPix):
-                c = self.sprite_bak.pixel(x, y)
-                self.sprite.setPixel(self.nbColumnPix - y - 1, x, c)
+        for y in range(0, EditMode.nbColumnPix):
+            for x in range(0, EditMode.nbRowPix):
+                c = EditMode.sprite_bak.pixel(x, y)
+                EditMode.sprite.setPixel(EditMode.nbColumnPix - y - 1, x, c)
 
         #
         self.repaint()
 
     def doRotate90AntiClock(self):
         #
-        self.SelectModeObj.initPasteRect()
-        self.SelectModeObj.initSelectRect()
-        self.DrawPolyLineModeObj.initDrawLine()
-        self.DrawRectangleModeObj.initDrawRect()
-        self.DrawEllipseModeObj.initDrawEllipse()
-        self.backupSprite()
+        self.select_mode_obj.initPasteRect()
+        self.select_mode_obj.initSelectRect()
+        self.rectangle_mode_obj.initRectangle()
+        self.ellipse_mode_obj.initEllipse()
+        self.current_edit_mode.backupSprite()
         #
-        for y in range(0, self.nbColumnPix):
-            for x in range(0, self.nbRowPix):
-                c = self.sprite_bak.pixel(x, y)
-                self.sprite.setPixel(y, self.nbRowPix - x - 1, c)
+        for y in range(0, EditMode.nbColumnPix):
+            for x in range(0, EditMode.nbRowPix):
+                c = EditMode.sprite_bak.pixel(x, y)
+                EditMode.sprite.setPixel(y, EditMode.nbRowPix - x - 1, c)
 
         #
         self.repaint()

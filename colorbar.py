@@ -3,6 +3,8 @@
 '''
 Created on 24 Nov. 2019
 
+Customn QWidget for color palette
+
 @author: nguray
 '''
 import os.path
