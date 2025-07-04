@@ -126,6 +126,7 @@ class EllipseModeCls(EditMode):
                 qp.setPen(self.foregroundColor)
                 left,top,right,bottom = self.live_rect.getNormalize()
                 qp.drawEllipse(left, top,right-left-1,bottom-top-1)
+                qp.end()
                 self.outer.repaint()
 
     def keyPressEvent(self, e):

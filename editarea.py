@@ -11,13 +11,6 @@ import os
 from PySide6 import QtGui, QtCore, QtWidgets
 from collections import namedtuple
 
-# from editarea_pencil_mode import PencilMode
-# from editarea_select_mode import SelectMode
-# from editarea_ellipse_mode import EllipseMode
-# from editarea_rectangle_mode import RectangleMode
-# from editarea_fill_mode import FillMode
-# from editarea_polyline_mode import PolyLineMode
-
 from edit_mode import EditMode
 from pencil_mode import PencilModeCls
 from rectangle_mode import RectangleModeCls
@@ -420,17 +413,6 @@ class MyEditArea(QtWidgets.QWidget):
 
         if not self.ellipse_mode_obj.live_rect.isEmpty():
             self.ellipse_mode_obj.drawLiveRect(qp)
-
-        # if (self.nb_points>0):
-        #    self.drawLivePolyLine(qp)
-        #self.DrawPolyLineModeObj.drawLivePolyLine(qp)
-
-        # color = self.forewardColor
-        # if (self.x>=0) and (self.y>=0):
-        #    qp.setPen(color)
-        #    qp.setBrush(color)
-        #    mx,my = self.pixToMouseCoord(self.x,self.y)
-        #    qp.drawRect(mx,my,self.pixSize,self.pixSize)
 
         qp.end()
 

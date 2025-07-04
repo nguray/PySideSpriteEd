@@ -11,14 +11,21 @@ class PencilModeCls(EditMode):
     def mousePressEvent(self, mouseEvent):
         mousePos = mouseEvent.pos()
         self.x, self.y = self.mouseToPixCoord(mousePos.x(), mousePos.y())
-        # modifiers = QApplication.keyboardModifiers()
+        modifiers = QtWidgets.QApplication.keyboardModifiers()
         if self.InSprite(self.x, self.y):
             if mouseEvent.buttons() == QtCore.Qt.LeftButton:
-                self.backupSprite()
-                self.sprite.setPixel(self.x, self.y,
-                                           EditMode.foregroundColor.rgba())
-                self.prev_x = self.x
-                self.prev_y = self.y
+                if modifiers & QtCore.Qt.ControlModifier:
+                    self.backupSprite()
+                    qp = QtGui.QPainter(self.sprite)
+                    qp.setPen(self.foregroundColor)
+                    qp.drawLine(self.prev_x, self.prev_y,self.x,self.y)
+                    qp.end()
+                else:
+                    self.backupSprite()
+                    self.sprite.setPixel(self.x, self.y,
+                                            EditMode.foregroundColor.rgba())
+                    self.prev_x = self.x
+                    self.prev_y = self.y
                 self.outer.repaint()
             elif mouseEvent.buttons() == QtCore.Qt.RightButton:
                 self.backupSprite()
@@ -28,20 +35,30 @@ class PencilModeCls(EditMode):
                 self.prev_y = self.y
                 self.outer.repaint()
 
-
     def mouseReleaseEvent(self, mouseEvent):
-        pass
+        modifiers = QtWidgets.QApplication.keyboardModifiers()
+        if modifiers & QtCore.Qt.ControlModifier:
+            self.prev_x = self.x
+            self.prev_y = self.y
+        
 
     def mouseMoveEvent(self, mouseEvent):
         mousePos = mouseEvent.pos()
         self.x, self.y = self.mouseToPixCoord(mousePos.x(), mousePos.y())
-        # modifiers = QtGui.QApplication.keyboardModifiers()
+        modifiers = QtWidgets.QApplication.keyboardModifiers()
         if self.InSprite(self.x, self.y):
             if mouseEvent.buttons() == QtCore.Qt.LeftButton:
-                self.sprite.setPixel(self.x, self.y,
-                                           EditMode.foregroundColor.rgba())
-                self.prev_x = self.x
-                self.prev_y = self.y
+                if modifiers & QtCore.Qt.ControlModifier:
+                    self.restoreSprite()
+                    qp = QtGui.QPainter(self.sprite)
+                    qp.setPen(self.foregroundColor)
+                    qp.drawLine(self.prev_x, self.prev_y,self.x,self.y)
+                    qp.end()
+                else:
+                    self.sprite.setPixel(self.x, self.y,
+                                            EditMode.foregroundColor.rgba())
+                    self.prev_x = self.x
+                    self.prev_y = self.y
                 self.outer.repaint()
             elif mouseEvent.buttons() == QtCore.Qt.RightButton:
                 self.backupSprite()
