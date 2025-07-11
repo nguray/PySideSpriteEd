@@ -47,7 +47,7 @@ class PencilModeCls(EditMode):
                 qp.drawLine(prev_pt.x, prev_pt.y, pt.x,pt.y)
                 prev_pt = pt
 
-    def hitPolygonPoint(self,x: int,y: int)->PointHandle:
+    def hitPolygonHandle(self,x: int,y: int)->PointHandle:
         for pt in self.polygon:
             if pt.rect.contains(x,y):
                 return pt
@@ -59,32 +59,47 @@ class PencilModeCls(EditMode):
         modifiers = QtWidgets.QApplication.keyboardModifiers()
         if self.InSprite(self.x, self.y):
             if mouseEvent.buttons() == QtCore.Qt.LeftButton:
-                self.polygonHandle = self.hitPolygonPoint(mousePos.x(), mousePos.y())
+                self.polygonHandle = self.hitPolygonHandle(mousePos.x(), mousePos.y())
                 if self.polygonHandle == None:
                     if modifiers & QtCore.Qt.ControlModifier:
                         if len(self.polygon)==0:
                             self.backupSprite()
                             self.polygon.append(PointHandle(self.prev_x, self.prev_y))
+                            self.polygon.append(PointHandle(self.x, self.y))
+                            # Store previous draw pixel
+                            self.prev_x = self.x
+                            self.prev_y = self.y
+                            # Updated sprite
+                            qp = QtGui.QPainter(self.sprite)
+                            qp.setPen(self.foregroundColor)
+                            self.drawPolygon(qp)
+                            qp.end()
                         else:
                             self.restoreSprite()
-                        self.polygon.append(PointHandle(self.x, self.y))
-                        qp = QtGui.QPainter(self.sprite)
-                        qp.setPen(self.foregroundColor)
-                        self.drawPolygon(qp)
-                        qp.end()
+                            if self.x!=self.prev_x or self.y!=self.prev_y:
+                                self.polygon.append(PointHandle(self.x, self.y))
+                                # Store previous draw pixel
+                                self.prev_x = self.x
+                                self.prev_y = self.y
+                                # Updated sprite
+                                qp = QtGui.QPainter(self.sprite)
+                                qp.setPen(self.foregroundColor)
+                                self.drawPolygon(qp)
+                                qp.end()
                     else:
                         self.polygon = []
                         self.backupSprite()
                         self.sprite.setPixel(self.x, self.y,
                                                 EditMode.foregroundColor.rgba())
+                        # Store previous draw pixel
+                        self.prev_x = self.x
+                        self.prev_y = self.y
                 self.outer.repaint()
             elif mouseEvent.buttons() == QtCore.Qt.RightButton:
                 pass
 
     def mouseReleaseEvent(self, mouseEvent):
-        # Store previous draw pixel
-        self.prev_x = self.x
-        self.prev_y = self.y
+        pass
 
     def mouseMoveEvent(self, mouseEvent):
         mousePos = mouseEvent.pos()
@@ -97,20 +112,30 @@ class PencilModeCls(EditMode):
                     # Update last point
                     self.polygonHandle.x = self.x
                     self.polygonHandle.y = self.y
-                    # Updated polygon
+                    # Updated sprite
                     qp = QtGui.QPainter(self.sprite)
                     self.drawPolygon(qp)
                     qp.end()
                 else:
                     if modifiers & QtCore.Qt.ControlModifier:
-                        self.restoreSprite()
-                        self.polygon.append(PointHandle(self.x, self.y))
-                        qp = QtGui.QPainter(self.sprite)
-                        self.drawPolygon(qp)
-                        qp.end()
+                        if self.x!=self.prev_x or self.y!=self.prev_y:
+                            self.restoreSprite()
+                            self.polygon.append(PointHandle(self.x, self.y))
+                            # Store previous draw pixel
+                            self.prev_x = self.x
+                            self.prev_y = self.y
+                            # Updated sprite
+                            qp = QtGui.QPainter(self.sprite)
+                            self.drawPolygon(qp)
+                            qp.end()
                     else:
-                        self.sprite.setPixel(self.x, self.y,
+                        if self.x!=self.prev_x or self.y!=self.prev_y:
+                            # Updated sprite
+                            self.sprite.setPixel(self.x, self.y,
                                                 EditMode.foregroundColor.rgba())
+                            # Store previous draw pixel
+                            self.prev_x = self.x
+                            self.prev_y = self.y
                 self.outer.repaint()
             elif mouseEvent.buttons() == QtCore.Qt.RightButton:
                 pass
