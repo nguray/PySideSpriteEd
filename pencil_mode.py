@@ -29,23 +29,28 @@ class PencilModeCls(EditMode):
         bottom = top + EditMode.pixSize - 1
         x = int((left + right) / 2)
         y = int((top + bottom) / 2)
-        pt.rect = Rect(x-2, y-2, x+2, y+2)
-        color = QtGui.QColor(255, 0, 0, 128)
-        qp.setPen(color)
-        qp.setBrush(color)
+        s = self.pixSize/2 - 2
+        pt.rect = Rect(x-s, y-s, x+s, y+s)
+        r = 255-self.foregroundColor.red()
+        g = 255-self.foregroundColor.green()
+        b = 255-self.foregroundColor.blue()
+        qp.setPen(QtGui.QColor(r, g, b, 255))
+        qp.setBrush(QtGui.QColor(0, 0, 0, 0))
         qp.drawRect(pt.rect.left, pt.rect.top, pt.rect.width(), pt.rect.height())
 
     def drawPolygon(self, qp: QtGui.QPainter):
         lp = len(self.polygon)
         if lp>1:
             prev_pt = self.polygon[0]
-            self.drawPolygonHandle(qp, prev_pt)
             for i in range(1,lp):
                 pt = self.polygon[i]
-                self.drawPolygonHandle(qp, pt)
                 qp.setPen(self.foregroundColor)
                 qp.drawLine(prev_pt.x, prev_pt.y, pt.x,pt.y)
                 prev_pt = pt
+            for pt in self.polygon:
+                self.drawPolygonHandle(qp, pt)
+
+            
 
     def hitPolygonHandle(self,x: int,y: int)->PointHandle:
         for pt in self.polygon:
@@ -55,6 +60,7 @@ class PencilModeCls(EditMode):
 
     def mousePressEvent(self, mouseEvent):
         mousePos = mouseEvent.pos()
+        mousePos -= QtCore.QPoint(EditMode.origin_x,EditMode.origin_y)
         self.x, self.y = self.mouseToPixCoord(mousePos.x(), mousePos.y())
         modifiers = QtWidgets.QApplication.keyboardModifiers()
         if self.InSprite(self.x, self.y):
@@ -103,6 +109,7 @@ class PencilModeCls(EditMode):
 
     def mouseMoveEvent(self, mouseEvent):
         mousePos = mouseEvent.pos()
+        mousePos -= QtCore.QPoint(EditMode.origin_x,EditMode.origin_y)
         self.x, self.y = self.mouseToPixCoord(mousePos.x(), mousePos.y())
         modifiers = QtWidgets.QApplication.keyboardModifiers()
         if self.InSprite(self.x, self.y):

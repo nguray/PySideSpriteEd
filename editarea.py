@@ -47,8 +47,6 @@ class MyEditArea(QtWidgets.QWidget):
 
     start_x = 0
     start_y = 0
-    origin_x = 0
-    origin_y = 0
     start_origin_x = 0
     start_origin_y = 0 
 
@@ -250,7 +248,7 @@ class MyEditArea(QtWidgets.QWidget):
 
     def mousePressEvent(self, mouseEvent):
         mousePos = mouseEvent.pos()
-        mousePos -= QtCore.QPoint(self.origin_x,self.origin_y)
+        mousePos -= QtCore.QPoint(EditMode.origin_x,EditMode.origin_y)
         self.x, self.y = EditMode.mouseToPixCoord(mousePos.x(), mousePos.y())
         modifiers = QtWidgets.QApplication.keyboardModifiers()
         if mouseEvent.buttons() == QtCore.Qt.LeftButton and modifiers & QtCore.Qt.ShiftModifier:
@@ -261,8 +259,8 @@ class MyEditArea(QtWidgets.QWidget):
         elif mouseEvent.buttons() == QtCore.Qt.MiddleButton:
             self.start_x = mousePos.x()
             self.start_y = mousePos.y()
-            self.start_origin_x = self.origin_x
-            self.start_origin_y = self.origin_y
+            self.start_origin_x = EditMode.origin_x
+            self.start_origin_y = EditMode.origin_y
 
         else:
             # --
@@ -281,8 +279,8 @@ class MyEditArea(QtWidgets.QWidget):
             dx = mousePos.x() - self.start_x 
             dy = mousePos.y() - self.start_y 
             if dx!=0 or dy!=0:
-                self.origin_x = self.start_origin_x + dx
-                self.origin_y = self.start_origin_y + dy
+                EditMode.origin_x = self.start_origin_x + dx
+                EditMode.origin_y = self.start_origin_y + dy
                 self.repaint()
             #print('dx={} dy={}'.format(dx,dy))
         else:
@@ -381,7 +379,7 @@ class MyEditArea(QtWidgets.QWidget):
         
         qp.begin(self)
     
-        qp.translate(QtCore.QPoint(self.origin_x,self.origin_y))
+        qp.translate(QtCore.QPoint(EditMode.origin_x,EditMode.origin_y))
 
         size = self.size()
         w = size.width()

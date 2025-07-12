@@ -10,6 +10,8 @@ class EditMode:
     nbColumnPix = 32
     foregroundColor = QtGui.QColor(0, 0, 255, 255)
     backgroundColor = QtGui.QColor(0, 0, 0, 0)
+    origin_x = 0
+    origin_y = 0
 
     def __init__(self):
         pass

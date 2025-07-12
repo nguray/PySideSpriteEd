@@ -77,6 +77,7 @@ class EllipseModeCls(EditMode):
 
     def mousePressEvent(self, mouseEvent):
         mousePos = mouseEvent.pos()
+        mousePos -= QtCore.QPoint(EditMode.origin_x,EditMode.origin_y)
         x, y = self.mouseToPixCoord(mousePos.x(), mousePos.y())
         if self.InSprite(x, y):
             if self.live_rect.isEmpty():
@@ -105,6 +106,7 @@ class EllipseModeCls(EditMode):
 
     def mouseMoveEvent(self, mouseEvent):
         mousePos = mouseEvent.pos()
+        mousePos -= QtCore.QPoint(EditMode.origin_x,EditMode.origin_y)
         x, y = self.mouseToPixCoord(mousePos.x(), mousePos.y())
         modifiers = QtWidgets.QApplication.keyboardModifiers()
         if self.InSprite(x, y):

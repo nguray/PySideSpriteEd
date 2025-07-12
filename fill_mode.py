@@ -9,6 +9,7 @@ class FillModeCls(EditMode):
 
     def mousePressEvent(self, mouseEvent):
         mousePos = mouseEvent.pos()
+        mousePos -= QtCore.QPoint(EditMode.origin_x,EditMode.origin_y)
         self.x, self.y = self.mouseToPixCoord(mousePos.x(), mousePos.y())
         # modifiers = QApplication.keyboardModifiers()
         if self.InSprite(self.x, self.y):
