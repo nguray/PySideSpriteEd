@@ -92,6 +92,15 @@ class SpriteBar(QtWidgets.QWidget):
         s = self.list_sprites[self.current_sprite]
         self.list_sprites_names[self.current_sprite] = fileName
         s.load(fileName, "PNG")
+        self.spriteChanged.emit()
+        self.repaint()
+
+    def createSprite(self, pixWidth: int, pixHeight: int)->None:
+        s = QtGui.QImage(pixWidth, pixHeight, QtGui.QImage.Format_ARGB32)
+        s.fill(QtGui.qRgba(0, 0, 0, 0))
+        self.list_sprites[self.current_sprite] = s
+        self.spriteChanged.emit()
+        self.repaint()
 
     def saveAsSprite(self, fileName):
         '''
@@ -99,7 +108,6 @@ class SpriteBar(QtWidgets.QWidget):
         s = self.list_sprites[self.current_sprite]
         self.list_sprites_names[self.current_sprite] = fileName
         s.save(fileName, "PNG")
-
 
     def saveSprite(self):
         '''

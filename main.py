@@ -13,7 +13,11 @@ from editarea import MyEditArea
 from colorbar import MyColorBar
 from spritebar import SpriteBar
 
+from new_sprite_dlg import Ui_new_sprite_dlg
+
 # MSYS2 Shell : rcc -g python -o resources.py qtspriteedit.qrc 
+# pyside6-uic new_sprite_dlg.ui -o new_sprite_dlg.py
+
 import  resources
 
 class myAbout(QDialog):
@@ -41,6 +45,12 @@ class myAbout(QDialog):
         # Add button signal to greetings slot
         self.button.clicked.connect(self.accept)
 
+class new_sprite_dlg(Ui_new_sprite_dlg, QDialog):
+    """Employee dialog."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        # Run the .setupUi() method to show the GUI
+        self.setupUi(self)
 
 class MyWindow(QMainWindow):
 
@@ -48,42 +58,59 @@ class MyWindow(QMainWindow):
         super(MyWindow, self).__init__()
         self.filename = ""
         self.spriteBarX = 16
+        self.pixWidth = 32
+        self.pixHeight = 32
         self.initUI()
 
     def newFile(self):
         """
         """
-        self.filename = ""
-        self.editarea.sprite.fill(QRgba64(0, 0, 0, 0))
-        self.repaint()
+        dlg = new_sprite_dlg(self)
+
+        dlg.with_val.setText("{}".format(self.pixWidth))
+        dlg.height_val.setText('{}'.format(self.pixHeight))
+        if dlg.exec()==QDialog.Accepted:
+            self.pixWidth = int(dlg.with_val.text())
+            self.pixHeight = int(dlg.height_val.text())
+            self.spritebar.createSprite(self.pixWidth,self.pixHeight)
+            print("Accepted => width {}, height {}"
+                  .format(self.pixWidth,self.pixHeight))
+        else:
+            print("Cancel")
 
     def newFile16(self):
         """
         """
-        self.filename = ""
-        self.editarea.init16Sprite()
-        w, _ = self.editarea.computeSize()
-        self.spriteBarX = w + 16
-        self.hbox.setStretch(1, 20)
-        self.repaint()
+        # self.filename = ""
+        # self.editarea.init16Sprite()
+        # w, _ = self.editarea.computeSize()
+        # self.spriteBarX = w + 16
+        # self.hbox.setStretch(1, 20)
+        # self.repaint()
+        dlg = new_sprite_dlg(self)
+        dlg.exec()
 
     def newFile32(self):
         """
         """
-        self.filename = ""
-        self.editarea.init32Sprite()
-        w, _ = self.editarea.computeSize()
-        self.spriteBarX = w + 16
-        self.hbox.setStretch(1, 36)
-        self.repaint()
+        # self.filename = ""
+        # self.editarea.init32Sprite()
+        # w, _ = self.editarea.computeSize()
+        # self.spriteBarX = w + 16
+        # self.hbox.setStretch(1, 36)
+        # self.repaint()
+        dlg = new_sprite_dlg(self)
+        dlg.exec()
 
     def newFile64(self):
-        self.filename = ""
-        self.editarea.init64Sprite()
-        w, _ = self.editarea.computeSize()
-        self.spriteBarX = w + 16
-        self.hbox.setStretch(1, 68)
-        self.repaint()
+        # self.filename = ""
+        # self.editarea.init64Sprite()
+        # w, _ = self.editarea.computeSize()
+        # self.spriteBarX = w + 16
+        # self.hbox.setStretch(1, 68)
+        # self.repaint()
+        dlg = new_sprite_dlg(self)
+        dlg.exec()
 
     def openFile(self):
         inputfilename, _ = QFileDialog.getOpenFileName(self, 'Open File', ".",
@@ -195,18 +222,17 @@ class MyWindow(QMainWindow):
         # Menu Actions
 
         # File Menu Actions
-        #newAction = QAction(QtGui.QIcon('icons/document-open.png'), 'New', self)
-        newAction = QAction('New', self)
+        newAction = QAction(QIcon(':res/document-new.png'), 'New', self)
         newAction.setShortcut('Ctrl+N')
         newAction.setStatusTip('Create new file')
         newAction.triggered.connect(self.newFile)
 
-        newAction16 = QAction('16 x 16', self)
-        #newAction16.triggered.connect(self.newFile16)
-        newAction32 = QAction('32 x 32', self)
-        #newAction32.triggered.connect(self.newFile32)
-        newAction64 = QAction('64 x 64', self)
-        #newAction64.triggered.connect(self.newFile64)
+        # newAction16 = QAction('16 x 16', self)
+        # newAction16.triggered.connect(self.newFile16)
+        # newAction32 = QAction('32 x 32', self)
+        # newAction32.triggered.connect(self.newFile32)
+        # newAction64 = QAction('64 x 64', self)
+        # newAction64.triggered.connect(self.newFile64)
 
         openAction = QAction(QIcon(':res/document-open.png'), 'Open',
                              self)
@@ -280,12 +306,14 @@ class MyWindow(QMainWindow):
 
         menubar = self.menuBar()
         self.fileMenu = menubar.addMenu('&File')
-        self.subNewMenu = QMenu('New')
-        self.subNewMenu.setIcon(QIcon(':res/document-new.png'))
-        self.subNewMenu.addAction(newAction16)
-        self.subNewMenu.addAction(newAction32)
-        self.subNewMenu.addAction(newAction64)
-        self.fileMenu.addMenu(self.subNewMenu)
+        # self.subNewMenu = QMenu('New')
+        # self.subNewMenu.setIcon(QIcon(':res/document-new.png'))
+        # self.subNewMenu.addAction(newAction16)
+        # self.subNewMenu.addAction(newAction32)
+        # self.subNewMenu.addAction(newAction64)        
+        # self.fileMenu.addMenu(self.subNewMenu)
+
+        self.fileMenu.addAction(newAction)
         self.fileMenu.addSeparator()
         self.fileMenu.addAction(openAction)
         self.fileMenu.addAction(saveAction)

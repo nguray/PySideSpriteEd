@@ -357,7 +357,11 @@ class MyEditArea(QtWidgets.QWidget):
         #
         self.repaint()
 
-    def setEditSprite(self, sprite):
+    def setEditSprite(self, sprite: QtGui.QImage):
+        EditMode.nbColumnPix = sprite.width()
+        EditMode.nbRowPix = sprite.height()
+        EditMode.sprite_bak = QtGui.QImage(EditMode.nbColumnPix, EditMode.nbRowPix, QtGui.QImage.Format_ARGB32)
+        EditMode.sprite_cpy = QtGui.QImage(EditMode.nbColumnPix, EditMode.nbRowPix, QtGui.QImage.Format_ARGB32)
         EditMode.sprite = sprite
         self.repaint()
 
