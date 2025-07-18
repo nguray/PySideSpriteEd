@@ -134,7 +134,7 @@ class EllipseModeCls(EditMode):
     def keyPressEvent(self, e):
         if e.key() == QtCore.Qt.Key_Return or e.key() == QtCore.Qt.Key_Enter:
             #
-            self.initDrawRect()
+            self.initEllipse()
             self.outer.repaint()
 
 

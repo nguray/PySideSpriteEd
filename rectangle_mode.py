@@ -132,6 +132,6 @@ class RectangleModeCls(EditMode):
     def keyPressEvent(self, e):
         if e.key() == QtCore.Qt.Key_Return or e.key() == QtCore.Qt.Key_Enter:
             #
-            self.initDrawRect()
+            self.initRectangle()
             self.outer.repaint()
 

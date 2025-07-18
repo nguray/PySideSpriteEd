@@ -22,7 +22,7 @@ class SpriteBar(QtWidgets.QWidget):
     list_sprites_names = []
     nb_cells = 8
     current_sprite = 0
-    cell_size = 40
+    cell_size = 64
 
     def __init__(self, parent=None):
         '''
@@ -83,7 +83,7 @@ class SpriteBar(QtWidgets.QWidget):
         for i,s in enumerate(self.list_sprites):
             if s!=None:
                 x = centerX - s.width() / 2
-                y = i * self.cell_size + self.cell_size/2 - s.height()/2 + 4
+                y = i * self.cell_size + self.cell_size/2 - s.height()/2
                 qp.drawImage(QtCore.QPoint(int(x), int(y)), s)
 
     def loadSprite(self, fileName):
@@ -121,9 +121,9 @@ class SpriteBar(QtWidgets.QWidget):
         '''
         '''
         size = self.size()
-        w = size.width() - 1
+        self.cell_size = size.width()
         xLeft = 0
-        xRight = xLeft + w
+        xRight = xLeft + self.cell_size - 1
         pen = QtGui.QPen(QtGui.QColor(20, 20, 255), 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         yTop = self.current_sprite * self.cell_size
@@ -150,14 +150,14 @@ class SpriteBar(QtWidgets.QWidget):
         qp.begin(self)
 
         size = self.size()
-        w = size.width()
+        self.cell_size = size.width()
         # h = size.height()
         pen = QtGui.QPen(QtGui.QColor(200, 200, 200), 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         #qp.drawRect(0, 0, w - 1, (8 * self.cell_size + 4) - 1)
 
         xLeft  = 0
-        xRight = w - 1
+        xRight = self.cell_size - 1
         yTop   = 0
         for i in range(0,len(self.list_sprites)):
             qp.drawLine(xLeft, yTop, xRight, yTop)

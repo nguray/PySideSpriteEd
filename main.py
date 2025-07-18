@@ -6,7 +6,7 @@ import sys
 
 from PySide6.QtGui import QPainter, QColor, QLinearGradient, QPen
 from PySide6.QtCore import QPoint, Qt, QPointF, Slot
-from PySide6.QtGui import QPaintEvent,QAction,QIcon,QRgba64
+from PySide6.QtGui import QPaintEvent,QAction,QIcon,QRgba64,QResizeEvent
 from PySide6.QtWidgets import QFileDialog,QDialog,QPushButton,QMenu,QWidget,QLabel,QApplication, QMainWindow, QHBoxLayout, QSlider, QVBoxLayout, QCheckBox
 
 from editarea import MyEditArea
@@ -66,7 +66,6 @@ class MyWindow(QMainWindow):
         """
         """
         dlg = new_sprite_dlg(self)
-
         dlg.with_val.setText("{}".format(self.pixWidth))
         dlg.height_val.setText('{}'.format(self.pixHeight))
         if dlg.exec()==QDialog.Accepted:
@@ -210,6 +209,14 @@ class MyWindow(QMainWindow):
 
     def spriteChanged(self):
         self.editarea.setEditSprite(self.spritebar.getCurSrpite())
+
+    def resizeEvent(self ,event: QResizeEvent):
+        newSize = event.size()
+        # -- Zone edition
+        self.hbox.setStretch(0, newSize.width())
+        # -- Sprite barre
+        self.hbox.setStretch(1, 66)
+
 
     def initUI(self):
 
@@ -412,15 +419,8 @@ class MyWindow(QMainWindow):
         self.spritebar.spriteChanged.connect(self.spriteChanged)
 
         self.hbox = QHBoxLayout()
-        self.hbox.addWidget(self.editarea)
-        self.hbox.addWidget(self.spritebar)
-
-        # -- Zone edition
-        self.hbox.setStretch(0, w)
-
-
-        # -- Sprite barre
-        self.hbox.setStretch(1, 40)
+        self.hbox.addWidget(self.editarea,550)
+        self.hbox.addWidget(self.spritebar,64)
 
         vbox = QVBoxLayout()
         vbox.addLayout(self.hbox)
@@ -435,8 +435,8 @@ class MyWindow(QMainWindow):
 
         self.setPencilEditMode()
 
-        self.setGeometry(300, 300, 500, 550)
-        self.setMinimumSize(500, 550)
+        self.setGeometry(300, 300, 550, 620)
+        self.setMinimumSize(550, 620)
 
         self.setWindowTitle('SpriteEditor')
 
