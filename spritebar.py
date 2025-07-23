@@ -51,16 +51,9 @@ class SpriteBar(QtWidgets.QWidget):
     def mouse2Index(self, mx, my):
         '''
         '''
-        size = self.size()
-        w = size.width()
-        # h = size.height()
-        centerX = w / 2
-        xLeft = centerX - self.cell_size / 2
-        xRight = xLeft + self.cell_size
-        if ((mx > xLeft) and (mx < xRight)):
-            id = int((my - 4) / self.cell_size)
-            if (id < self.nb_cells):
-                return id
+        for i, s in enumerate(self.list_sprites):
+            if s.contains(mx,my):
+                return i
         return -1
 
     def getCurSrpite(self):
@@ -91,8 +84,7 @@ class SpriteBar(QtWidgets.QWidget):
         w = size.width()
         centerX = w / 2
         for i,s in enumerate(self.list_sprites):
-            s.setRect(0,i*self.cell_size,self.cell_size,self.cell_size)
-            if i==self.current_sprite: # Update inly current sprite
+            if i==self.current_sprite: # Update only current sprite
                 s.sc_sprite = s.sprite.scaled(QtCore.QSize(self.cell_size-2,self.cell_size-2),
                                                    QtCore.Qt.AspectRatioMode.KeepAspectRatio)
             if s.sc_sprite is not None:
@@ -173,10 +165,13 @@ class SpriteBar(QtWidgets.QWidget):
         qp.setPen(pen)
         #qp.drawRect(0, 0, w - 1, (8 * self.cell_size + 4) - 1)
 
+        # Draw cells frames
         xLeft  = 0
         xRight = self.cell_size - 1
         yTop   = 0
-        for i in range(0,len(self.list_sprites)):
+        for s in self.list_sprites:
+            # Update cells rectangles
+            s.setRect(xLeft,yTop,self.cell_size,self.cell_size)
             qp.drawLine(xLeft, yTop, xRight, yTop)
             yTop += self.cell_size
         qp.drawLine(xLeft, yTop, xRight, yTop)

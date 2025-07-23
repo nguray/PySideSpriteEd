@@ -135,6 +135,13 @@ class MyColorBar(QtWidgets.QWidget):
                 offSet = self.cellsize // 2
                 self.dragColorRect.setRect(x-offSet,y-offSet,self.cellsize,self.cellsize)
                 self.repaint()
+            elif self.selectedBackColor.contains(x,y):
+                # Swap Fore and Back colors
+                c = self.selectedBackColor.color
+                self.selectedBackColor.color = self.selectedForeColor.color
+                self.selectedForeColor.color = c
+                self.foreColorChanged.emit(self.selectedForeColor.color)
+                self.repaint()
             else:
                 for lin in self.palette.items():
                     for colorRect in lin[1]:
