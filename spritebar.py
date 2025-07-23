@@ -10,6 +10,13 @@ Customn QWidget for sprites
 
 from PySide6 import QtGui, QtCore, QtWidgets
 
+class SpriteCell(QtCore.QRect):
+    def __init__(self):
+        QtCore.QRect.__init__(self)
+        self.sprite = None
+        self.sc_sprite = None
+        self.name = ""
+
 
 class SpriteBar(QtWidgets.QWidget):
     '''
@@ -19,7 +26,6 @@ class SpriteBar(QtWidgets.QWidget):
     spriteChanged = QtCore.Signal()
 
     list_sprites = []
-    list_sprites_names = []
     nb_cells = 8
     current_sprite = 0
     cell_size = 64
@@ -31,13 +37,16 @@ class SpriteBar(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self, parent)
 
         for i in range(0, self.nb_cells):
+            sc = SpriteCell()
+            self.list_sprites.append(sc)
             if (i == 0):
-                s = QtGui.QImage(32, 32, QtGui.QImage.Format_ARGB32)
-                s.fill(QtGui.qRgba(0, 0, 0, 0))
-                self.list_sprites.append(s)
+                sc.sprite = QtGui.QImage(32, 32, QtGui.QImage.Format_ARGB32)
+                sc.sprite.fill(QtGui.qRgba(0, 0, 0, 0))
+                sc.sc_sprite = sc.sprite.scaled(QtCore.QSize(self.cell_size-2,self.cell_size-2),
+                                                   QtCore.Qt.AspectRatioMode.KeepAspectRatio)
             else:
-                self.list_sprites.append(None)
-            self.list_sprites_names.append("")
+                sc.sprite = None
+                sc.sc_sprite = None
 
     def mouse2Index(self, mx, my):
         '''
@@ -57,7 +66,7 @@ class SpriteBar(QtWidgets.QWidget):
     def getCurSrpite(self):
         '''
         '''
-        return self.list_sprites[self.current_sprite]
+        return self.list_sprites[self.current_sprite].sprite
 
     def mousePressEvent(self, mouseEvent):
         '''
@@ -66,11 +75,12 @@ class SpriteBar(QtWidgets.QWidget):
         if mouseEvent.buttons() == QtCore.Qt.LeftButton:
             id = self.mouse2Index(mousePos.x(), mousePos.y())
             if id >= 0:
-                if self.list_sprites[id] is None:
-                    s = QtGui.QImage(32, 32, QtGui.QImage.Format_ARGB32)
-                    self.list_sprites[id] = s
-                    s.fill(QtGui.qRgba(0, 0, 0, 0))
                 self.current_sprite = id
+                sc = self.list_sprites[id]
+                if sc.sprite is None:
+                    s = QtGui.QImage(32, 32, QtGui.QImage.Format_ARGB32)
+                    s.fill(QtGui.qRgba(0, 0, 0, 0))
+                    sc.sprite = s
                 self.spriteChanged.emit()
                 self.repaint()
 
@@ -81,40 +91,47 @@ class SpriteBar(QtWidgets.QWidget):
         w = size.width()
         centerX = w / 2
         for i,s in enumerate(self.list_sprites):
-            if s!=None:
-                x = centerX - s.width() / 2
-                y = i * self.cell_size + self.cell_size/2 - s.height()/2
-                qp.drawImage(QtCore.QPoint(int(x), int(y)), s)
+            s.setRect(0,i*self.cell_size,self.cell_size,self.cell_size)
+            if i==self.current_sprite: # Update inly current sprite
+                s.sc_sprite = s.sprite.scaled(QtCore.QSize(self.cell_size-2,self.cell_size-2),
+                                                   QtCore.Qt.AspectRatioMode.KeepAspectRatio)
+            if s.sc_sprite is not None:
+                x = centerX - s.sc_sprite.width() / 2
+                y = i * self.cell_size + self.cell_size/2 - s.sc_sprite.height()/2
+                qp.drawImage(QtCore.QPoint(int(x), int(y)), s.sc_sprite)
 
     def loadSprite(self, fileName):
         '''
         '''
-        s = self.list_sprites[self.current_sprite]
-        self.list_sprites_names[self.current_sprite] = fileName
-        s.load(fileName, "PNG")
+        sc = self.list_sprites[self.current_sprite]
+        sc.name = fileName
+        sc.sprite.load(fileName, "PNG")
         self.spriteChanged.emit()
         self.repaint()
 
     def createSprite(self, pixWidth: int, pixHeight: int)->None:
         s = QtGui.QImage(pixWidth, pixHeight, QtGui.QImage.Format_ARGB32)
         s.fill(QtGui.qRgba(0, 0, 0, 0))
-        self.list_sprites[self.current_sprite] = s
+        sc = self.list_sprites[self.current_sprite]
+        sc.sprite = s
+        sc.sc_sprite = sc.sc_sprite.scaled(QtCore.QSize(self.cell_size,self.cell_size),
+                                            QtCore.Qt.AspectRatioMode.KeepAspectRatio)
         self.spriteChanged.emit()
         self.repaint()
 
     def saveAsSprite(self, fileName):
         '''
         '''
-        s = self.list_sprites[self.current_sprite]
-        self.list_sprites_names[self.current_sprite] = fileName
-        s.save(fileName, "PNG")
+        sc = self.list_sprites[self.current_sprite]
+        sc.name = fileName
+        sc.sprite.save(fileName, "PNG")
 
     def saveSprite(self):
         '''
         '''
-        s = self.list_sprites[self.current_sprite]
-        fileName = self.list_sprites_names[self.current_sprite]
-        s.save(fileName, "PNG")
+        sc = self.list_sprites[self.current_sprite]
+        fileName = sc.name
+        sc.sprite.save(fileName, "PNG")
 
 
     def drawSelectMark(self, qp):
