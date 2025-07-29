@@ -65,8 +65,9 @@ class PencilModeCls(EditMode):
         modifiers = QtWidgets.QApplication.keyboardModifiers()
         if self.InSprite(self.x, self.y):
             if mouseEvent.buttons() == QtCore.Qt.LeftButton:
+
                 self.polygonHandle = self.hitPolygonHandle(mousePos.x(), mousePos.y())
-                if self.polygonHandle == None:
+                if self.polygonHandle is None:
                     if modifiers & QtCore.Qt.ControlModifier:
                         if len(self.polygon)==0:
                             self.backupSprite()
@@ -75,11 +76,6 @@ class PencilModeCls(EditMode):
                             # Store previous draw pixel
                             self.prev_x = self.x
                             self.prev_y = self.y
-                            # Updated sprite
-                            qp = QtGui.QPainter(self.sprite)
-                            qp.setPen(self.foregroundColor)
-                            self.drawPolygon(qp)
-                            qp.end()
                         else:
                             self.restoreSprite()
                             if self.x!=self.prev_x or self.y!=self.prev_y:
@@ -87,11 +83,12 @@ class PencilModeCls(EditMode):
                                 # Store previous draw pixel
                                 self.prev_x = self.x
                                 self.prev_y = self.y
-                                # Updated sprite
-                                qp = QtGui.QPainter(self.sprite)
-                                qp.setPen(self.foregroundColor)
-                                self.drawPolygon(qp)
-                                qp.end()
+                        self.polygonHandle = self.polygon[-1]
+                        # Updated sprite
+                        qp = QtGui.QPainter(self.sprite)
+                        qp.setPen(self.foregroundColor)
+                        self.drawPolygon(qp)
+                        qp.end()
                     else:
                         self.polygon = []
                         self.backupSprite()
